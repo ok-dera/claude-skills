@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{PROJECT}} — Release Walkthrough</title>
+<style>
+  @page { size: A4; margin: 14mm 13mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color: #16202a;
+    font-size: 10.5pt;
+    line-height: 1.5;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  h1, h2, h3 { line-height: 1.2; margin: 0; }
+
+  /* ---------- cover ---------- */
+  .cover {
+    height: 262mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    page-break-after: always;
+    border-top: 6px solid var(--accent, #c81939);
+    padding-top: 18mm;
+  }
+  .cover .kicker { font-size: 10pt; letter-spacing: .18em; text-transform: uppercase; color: var(--accent2, #5babba); font-weight: 700; }
+  .cover h1 { font-size: 30pt; font-weight: 800; margin: 6mm 0 4mm; letter-spacing: -.5pt; }
+  .cover .sub { font-size: 13pt; color: #4a5a68; max-width: 130mm; }
+  .cover .meta { margin-top: 14mm; font-size: 9.5pt; color: #6b7a86; }
+  .cover .meta b { color: #16202a; }
+  .cover .note {
+    margin-top: 10mm; padding: 5mm 6mm; background: #f4f7f8;
+    border-left: 3px solid var(--accent2, #5babba); font-size: 9.5pt; color: #35485a; max-width: 150mm;
+  }
+
+  /* ---------- contents ---------- */
+  .toc { page-break-after: always; }
+  .toc h2 { font-size: 15pt; margin-bottom: 6mm; padding-bottom: 3mm; border-bottom: 2px solid #16202a; }
+  .toc ol { margin: 0; padding-left: 6mm; }
+  .toc li { margin-bottom: 3.2mm; }
+  .toc li b { font-weight: 700; }
+  .toc li span { color: #6b7a86; display: block; font-size: 9.5pt; }
+
+  /* ---------- sections ---------- */
+  section { page-break-before: always; }
+  .eyebrow { font-size: 8.5pt; letter-spacing: .16em; text-transform: uppercase; color: var(--accent, #c81939); font-weight: 700; }
+  section > h2 {
+    font-size: 18pt; font-weight: 800; margin: 2mm 0 4mm;
+    padding-bottom: 3mm; border-bottom: 2px solid #16202a; letter-spacing: -.3pt;
+  }
+  .lede { font-size: 11pt; color: #35485a; margin: 0 0 5mm; max-width: 165mm; }
+
+  h3 { font-size: 11.5pt; font-weight: 700; margin: 6mm 0 2mm; }
+  p { margin: 0 0 3mm; }
+  ul { margin: 0 0 4mm; padding-left: 5.5mm; }
+  li { margin-bottom: 1.6mm; }
+
+  .box {
+    background: #f4f7f8; border-left: 3px solid var(--accent2, #5babba);
+    padding: 4mm 5mm; margin: 4mm 0; font-size: 9.5pt; color: #35485a;
+  }
+  .box b { color: #16202a; }
+  .box.before-after { border-left-color: #c9a227; background: #fdfaf0; }
+
+  figure { margin: 0 0 6mm; page-break-inside: avoid; }
+  figure img {
+    width: 100%; display: block;
+    border: 1px solid #d5dee4; border-radius: 2mm;
+  }
+  figcaption {
+    font-size: 8.5pt; color: #6b7a86; margin-top: 2mm;
+    border-left: 2px solid #e3eaee;
+    padding-left: 3mm;
+  }
+  figcaption b { color: #16202a; }
+
+  /* side-by-side pair of screenshots; .tall constrains portrait shots */
+  .pair { display: flex; gap: 4mm; page-break-inside: avoid; margin-bottom: 6mm; }
+  .pair.tall img { max-height: 195mm; width: auto; max-width: 100%; margin: 0 auto; }
+  .pair.tall figure { display: flex; flex-direction: column; }
+  figure.narrow img { max-width: 118mm; margin: 0 auto; }
+  .pair figure { flex: 1; margin-bottom: 0; }
+
+  /* audience tags */
+  .tag {
+    display: inline-block; font-size: 7.5pt; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; padding: .6mm 2mm; border-radius: 1mm;
+    background: #eef3f5; color: #4a5a68; margin-left: 2mm; vertical-align: 1.2mm;
+  }
+  .tag.staff { background: #eaf0f6; color: #35526e; }
+  .tag.public { background: #eaf6ee; color: #2b6b42; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="kicker">Release walkthrough</div>
+  <h1>What&rsquo;s new on<br>{{PROJECT}}</h1>
+  <div class="sub">{{One-line summary of the release: the two or three headline changes, in plain words.}}</div>
+  <div class="meta">
+    Prepared <b>{{DATE}}</b><br>
+    Covers pull request <b>#{{N}}</b> &mdash; &ldquo;{{PR title}}&rdquo;
+  </div>
+  <div class="note">
+    <b>About the figures in this document.</b> Every screenshot is taken from the working
+    application. The names and amounts are illustrative sample data created for this
+    walkthrough &mdash; they are not real users or real payments.
+  </div>
+</div>
+
+<div class="toc">
+  <h2>What&rsquo;s covered</h2>
+  <ol>
+    <li><b>{{Feature name in plain words}}</b><span>{{One sentence on what changed and why it matters.}}</span></li>
+    <!-- one <li> per section below -->
+  </ol>
+</div>
+
+<!-- ============================ 1. {{FEATURE}} ============================ -->
+<section>
+  <div class="eyebrow">01 &middot; {{Area of the product}} <span class="tag public">Everyone sees this</span></div>
+  <h2>{{Feature heading — outcome, not implementation}}</h2>
+  <p class="lede">
+    {{Two or three sentences: what the problem was, what it is now. No jargon.}}
+  </p>
+
+  <figure>
+    <img src="01-{{slug}}.jpg" alt="{{alt}}">
+    <figcaption><b>{{Lead-in.}}</b> {{What the reader is looking at and the one detail they should notice.}}</figcaption>
+  </figure>
+
+  <div class="box before-after">
+    <b>Before:</b> {{old behaviour}}. <b>Now:</b> {{new behaviour}}.
+  </div>
+</section>
+
+</body>
+</html>

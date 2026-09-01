@@ -3,7 +3,8 @@
 Claude Code skills and commands I use to ship production software. Not prompt collections — each one encodes a
 process with enforced invariants, so the model operates inside constraints instead of improvising.
 
-Two things live here: a persistent QA harness (`qa-memory-bank`) and an orchestrator mode (`fable`).
+Three things live here: a persistent QA harness (`qa-memory-bank`), a client-reporting pipeline
+(`client-walkthrough`), and an orchestrator mode (`fable`).
 
 ---
 
@@ -67,6 +68,41 @@ fresh workspace on first run.
 
 ---
 
+## `client-walkthrough` — a PR the client can actually read
+
+**The problem.** The people paying for the work can't read a diff. "What did we get this sprint?" deserves
+better than a commit list, and hand-assembling a screenshot deck for every release doesn't scale.
+
+**The design.** A seven-step pipeline from pull request to polished A4 PDF, screenshots taken from the real
+running app:
+
+1. **Read the PR** (`gh pr view` / `gh pr diff`) and split changes into client-visible vs. purely technical.
+2. **Approval gate** — present the proposed section list and wait; nothing is shot or written until the human
+   trims it. The agent decides nothing about what the client sees.
+3. **Disposable demo database** — clone the dev DB (settings overlay points Django at the clone), then *curate
+   by renaming*: QA fixture rows become plausible fictional people. Renaming instead of deleting matters —
+   deletes cascade away the very rows that make dashboards worth photographing.
+4. **Capture with playwright-cli** — fixed viewport, `NN-slug.png` ordering, per-role logins (public /
+   customer / staff). Ships with the capture gotchas pre-learned: eval-scrolling silently resets (use
+   `mousewheel`), element shots for forms on busy backgrounds, `label:has()` for sr-only toggles, cursor
+   parked off-table so no hover state leaks into a frame, re-navigate past one-time toasts.
+5. **Compress** PNG→JPG (`sips`, ~80 quality) so the PDF stays mailable.
+6. **Render** — fill the bundled A4 print template (cover, TOC, numbered sections, figure/caption blocks,
+   staff/public audience tags, before/after boxes), serve it over local HTTP (playwright-cli blocks `file://`),
+   `playwright-cli pdf`.
+7. **QA pass** over the rendered pages — no split figures, no junk data, no logged-in QA username in a header —
+   then drop the demo database.
+
+**The invariants:** every screenshot is the real app, never a mockup; sample data is declared as illustrative
+on the cover; anything the walkthrough claims must be visible in a frame — if the shot contradicts the story
+(a stale button label, a reverted fix), that's a finding to report back to engineering, not a thing to crop
+around silently.
+
+Comes with `references/writing-style.md` — the tone rules (outcome-first headings, banned jargon, caption
+format) that keep the prose a client document instead of a changelog.
+
+---
+
 ## `fable` — orchestrator mode
 
 Flips the session's default: plan, supervise, audit, review — delegate implementation to sub-agents via specs,
@@ -81,7 +117,8 @@ Clone anywhere, then symlink into your Claude Code config:
 
 ```bash
 git clone https://github.com/ok-dera/claude-skills.git
-ln -s "$PWD/claude-skills/skills/qa-memory-bank" ~/.claude/skills/qa-memory-bank
+ln -s "$PWD/claude-skills/skills/qa-memory-bank"     ~/.claude/skills/qa-memory-bank
+ln -s "$PWD/claude-skills/skills/client-walkthrough" ~/.claude/skills/client-walkthrough
 ln -s "$PWD/claude-skills/commands/qa.md"      ~/.claude/commands/qa.md
 ln -s "$PWD/claude-skills/commands/qa-run.md"  ~/.claude/commands/qa-run.md
 ln -s "$PWD/claude-skills/commands/fable.md"   ~/.claude/commands/fable.md
