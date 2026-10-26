@@ -65,6 +65,15 @@ fresh workspace on first run.
   delegation that lets the agent start servers. Includes a parallel-agent partitioning scheme with hard
   ownership rules: one tracker per agent, one test account per agent, isolated browser sessions, and
   orchestrator-owned ID blocks pre-assigned so concurrent filing stays monotonic.
+- **`/investigate`** — read-only triage. Clusters the reported issues, traces each one through every layer to
+  `file:line` evidence, and reports one plain-English block per issue: status, severity, cause, a concrete
+  example, the fix, and whether a human decision is needed. Applies no fixes.
+- **`/qa-cycle`** — the closed loop: fix approved issues → test → retest → investigate → PR → code review,
+  repeating on its own until a human decision is needed. Every fix starts from a failing reproducing test that
+  may not be weakened afterwards. Auto-fixes are limited to verified issues outside high-stakes areas (money,
+  auth, permissions, PII, migrations). Review rounds are capped at 3, scoped to what the PR introduced, and
+  logged in a ledger, so a rejected finding stays visible and a failed review never counts as approval. Never
+  merges.
 
 ---
 
@@ -122,7 +131,12 @@ ln -s "$PWD/claude-skills/skills/client-walkthrough" ~/.claude/skills/client-wal
 ln -s "$PWD/claude-skills/commands/qa.md"      ~/.claude/commands/qa.md
 ln -s "$PWD/claude-skills/commands/qa-run.md"  ~/.claude/commands/qa-run.md
 ln -s "$PWD/claude-skills/commands/fable.md"   ~/.claude/commands/fable.md
+ln -s "$PWD/claude-skills/commands/investigate.md" ~/.claude/commands/investigate.md
+ln -s "$PWD/claude-skills/commands/qa-cycle.md"    ~/.claude/commands/qa-cycle.md
 ```
+
+`/qa-cycle` calls `/investigate`, `/qa-run` and Claude Code's built-in `/code-review`. Its fix-mode test guard
+hook isn't included here; without it, the command applies the same rule by instruction.
 
 Then `/qa` in any project. With no `qa-memory-bank/` present it offers to scaffold one and asks for the facts
 it needs; it won't guess URLs or credentials.
